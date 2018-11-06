@@ -15,24 +15,19 @@ app.use(bodyParser.urlencoded({ extended: false }))
 // 把 node_modules 文件夹，托管为静态资源目录
 app.use('/node_modules', express.static('./node_modules'))
 
- // 导入 router/index.js 路由模块
- const router = require('./router/index.js')
- app.use(router)
- // 导入 用户相关的 路由模块
- const router2 = require('./router/user.js')
- app.use(router2)
+
 
 // 使用 循环的方式，进行路由的自动注册
-//fs.readdir(path.join(__dirname, './router'), (err, filenames) => {
-//  if (err) return console.log('读取 router 目录中的路由失败！')
-//  // 循环router目录下的每一个文件名
-//  filenames.forEach(fname => {
-//    // 每循环一次，拼接出一个完整的路由模块地址
-//    // 然后，使用 require 导入这个路由模块
-//    const router = require(path.join(__dirname, './router', fname))
-//    app.use(router)
-//  })
-//})
+fs.readdir(path.join(__dirname, './router'), (err, filenames) => {
+  if (err) return console.log('读取 router 目录中的路由失败！')
+  // 循环router目录下的每一个文件名
+  filenames.forEach(fname => {
+    // 每循环一次，拼接出一个完整的路由模块地址
+    // 然后，使用 require 导入这个路由模块
+    const router = require(path.join(__dirname, './router', fname))
+    app.use(router)
+  })
+})
 
 app.listen(8099, () => {
   console.log('server running at http://127.0.0.1:8099')
