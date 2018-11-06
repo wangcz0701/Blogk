@@ -2,19 +2,18 @@ const moment = require('moment')
 // 导入 数据库 操作模块
 const conn = require('../db/index.js')
 
-// 展示注册页面
-const showRegisterPage = (req, res) => {
+module.exports = {
+  // 展示注册页面
+  showRegisterPage (req, res){
   // 注意：当 在 调用 模板引擎的 res.render 函数的时候， ./ 相对路径，是相对于 app.set('views') 指定的目录，来进行查找的
   res.render('./user/register.ejs', {})
-}
-
-// 展示登录页面
-const showLoginPage = (req, res) => {
+},
+  // 展示登录页面
+  showLoginPage (req, res){
   res.render('./user/login.ejs', {})
-}
-
-// 注册新用户的请求处理函数
-const reg = (req, res) => {
+},
+  // 注册新用户的请求处理函数
+  reg (req, res) {
 
   const body = req.body
   // 判断用户输入的数据是否完整
@@ -36,10 +35,9 @@ const reg = (req, res) => {
       res.send({ msg: '注册新用户成功！', status: 200 })
     })
   })
-}
-
-// 登录的请求处理函数
-const login = (req, res) => {
+},
+  // 登录的请求处理函数
+  login (req, res) {
   // 1. 获取到表单中的数据
   const body = req.body
   // 2. 执行Sql语句，查询用户是否存在
@@ -52,11 +50,11 @@ const login = (req, res) => {
     // 查询成功
     res.send({ msg: 'ok', status: 200 })
   })
-}
-
-module.exports = {
-  showRegisterPage,
-  showLoginPage,
-  reg,
-  login
+},
+  //注销的请求处理函数
+  logout (req,res) {
+    req.session.destroy( () => {
+      res.redirect('/')
+    })
+  }
 }
