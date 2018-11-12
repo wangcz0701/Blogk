@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<link rel="stylesheet" href="../node_modules/bootstrap/bootstrap-3.3.7.css">
+<script src="../node_modules/vue/dist/vue.min.js"></script>
+<script src="../node_modules/vue-resource/dist/vue-resource.js"></script>
+<body>
+
+<div id="app">
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <h3 class="panel-title">添加品牌</h3>
+        </div>
+        <div class="panel-body form-inline">
+
+            <label>
+                Name:
+                <input type="text" v-model="name" class="form-control">
+            </label>
+
+            <input type="button" value="添加" @click = "add()" class="btn btn-primary">
+        </div>
+    </div>
+
+
+
+    <table class="table table-bordered table-hover table-striped">
+        <thead>
+        <tr>
+            <th>Id</th>
+            <th>Name</th>
+            <th>Ctime</th>
+            <th>Operation</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr v-for="item in list" :key="item.id">
+            <td>{{item.id}}</td>
+            <td>{{item.name}}</td>
+            <td>{{item.ctime}}</td>
+            <td>
+                <a href="javascript:;" @click="del(item.id)">删除</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<script>
+    Vue.http.options.root = 'http://www.lovegf.cn:8899/'
+    Vue.http.options.emulateJSON = true;
+    var vm = new Vue({
+        el: '#app',
+        data: {
+            name:'',
+            list:[]
+        },
+        created(){
+        this.getlist()
+    },
+        methods: {
+//            get(){
+//               this.$http.get('http://www.lovegf.cn:8899/api/getlunbo').then(res => {
+//            console.log(res.body)
+//        })
+//     },
+//            post(){
+//                this.$http.post('http://www.lovegf.cn:8899/api/post',{},{emulateJSON:true}).then(res => {
+//            console.log(res.body)
+//        })
+//    }
+            getlist(){
+            this.$http.get('api/getprodlist').then(result => {
+                    var result = result.body
+                    if (result.status === 0) {
+                        this.list = result.message
+                    } else {
+                        alert('获取数据失败！')
+                    }
+        })
+    },
+            add(){
+                this.$http.post('api/addproduct',{name : this.name}).then(result =>{
+                    if(result.body.status === 0){
+                        this.getlist()
+                        this.name = ''
+                    }else {
+                        alert('失败了')
+                    }
+          })
+            },
+            del(id){
+                this.$http.get('api/delproduct/' + id).then(result => {
+                    if (result.body.status === 0) {
+                        this.getlist()
+                    } else {
+                        alert('删除失败！')
+                    }
+                })
+            }
+        }
+
+    })
+</script>
+
+</body>
+</html>
